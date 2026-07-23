@@ -1,0 +1,69 @@
+{
+  "name": "shiji-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A private, local-first desktop screen time tracker.",
+  "author": "Shiji",
+  "type": "module",
+  "main": "electron/main.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:web\" \"npm:dev:electron\"",
+    "dev:web": "vite --host 127.0.0.1",
+    "dev:electron": "wait-on tcp:5173 && cross-env VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .",
+    "build": "tsc --noEmit && vite build && node scripts/verify-dist.mjs",
+    "package:win": "npm run build && electron-builder --win portable --x64",
+    "start": "electron .",
+    "smoke:collector": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/smoke-active-win.mjs",
+    "test": "node --test electron/tests/*.test.js",
+    "check": "tsc --noEmit",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "active-win": "^8.2.1",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.0.12",
+    "png-to-ico": "^2.1.8",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "wait-on": "^8.0.2"
+  },
+  "build": {
+    "appId": "cn.shiji.desktop",
+    "productName": "时迹",
+    "asar": true,
+    "npmRebuild": false,
+    "electronDist": "node_modules/electron/dist",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "build/icon.png",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "portable"
+      ],
+      "artifactName": "Shiji-${version}-Portable.${ext}"
+    }
+  },
+  "overrides": {
+    "tar": "^7.5.21"
+  }
+}
